@@ -5,7 +5,7 @@ LABEL maintainer="Yury Muski <muski.yury@gmail.com>"
 WORKDIR /opt
 
 RUN apt-get update && \
-    apt-get install -y build-essential git autoconf libtool libssl-dev cmake golang-go curl;
+    apt-get install -y build-essential git autoconf libtool libcrypto-dev libssl-dev cmake golang-go curl;
 
 # https://github.com/curl/curl/blob/master/docs/HTTP3.md#quiche-version
 
