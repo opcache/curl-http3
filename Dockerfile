@@ -18,40 +18,5 @@ RUN cd quiche/deps/boringssl && \
     cmake -DCMAKE_POSITION_INDEPENDENT_CODE=on .. && \
     make && \
     cd .. && \
-    mkdir -p .openssl/lib && \
-    cp build/crypto/libcrypto.a build/ssl/libssl.a .openssl/lib && \
-    ln -s $PWD/include .openssl
-
-# install rust & cargo
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y -q;
-
-# build quiche:
-RUN export PATH="$HOME/.cargo/bin:$PATH" && \
-    cd quiche && \
-    QUICHE_BSSL_PATH=$PWD/deps/boringssl cargo build --release --features pkg-config-meta,qlog
-
-#adding curl
-RUN git clone https://github.com/curl/curl && \
-    cd curl && \
-    ./buildconf && \
-    ./configure LDFLAGS="-Wl,-rpath,/opt/quiche/target/release" --with-ssl=/opt/quiche/deps/boringssl/.openssl --with-quiche=/opt/quiche/target/release --enable-alt-svc && \
-    make && \
-    make DESTDIR="/ubuntu/" install
-
-
-FROM ubuntu:bionic
-RUN apt-get update && apt-get install -y curl
-
-COPY --from=builder /ubuntu/usr/local/ /usr/local/
-COPY --from=builder /opt/quiche/target/release /opt/quiche/target/release
-COPY --from=builder /opt/quiche/deps/boringssl/.openssl /opt/quiche/deps/boringssl/.openssl
-
-# Resolve any issues of C-level lib
-# location caches ("shared library cache")
-RUN ldconfig
-
-WORKDIR /opt
-# add httpstat script
-RUN curl -s https://raw.githubusercontent.com/b4b4r07/httpstat/master/httpstat.sh >httpstat.sh && chmod +x httpstat.sh
-
-CMD ["curl"]
+    mkdir -p .openssl/lib
+   
