@@ -19,7 +19,7 @@ RUN cd quiche/deps/boringssl && \
     cd .. && \
     mkdir -p .openssl/lib && \
     cp build/libcrypto.a build/libssl.a .openssl/lib && \
-    ln -s $PWD/include .openssl
+    ln -s /opt/quiche/deps/boringssl/include /opt/quiche/deps/boringssl/.openssl
 
 # install rust & cargo
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y -q;
