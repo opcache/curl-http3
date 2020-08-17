@@ -30,13 +30,6 @@ RUN export PATH="$HOME/.cargo/bin:$PATH" && \
     QUICHE_BSSL_PATH=$PWD/deps/boringssl cargo build --release --features pkg-config-meta,qlog
 
 
-#adding curl
-RUN git clone https://github.com/curl/curl && \
-    cd curl && \
-    ./buildconf && \
-    ./configure LDFLAGS="-Wl,-rpath,/opt/quiche/target/release" --with-ssl=/opt/quiche/deps/boringssl/.openssl --with-quiche=/opt/quiche/target/release --enable-alt-svc && \
-    make && \
-    make DESTDIR="/ubuntu/" install
 
 
 FROM ubuntu:bionic
