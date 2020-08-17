@@ -18,8 +18,6 @@ RUN cd quiche/deps/boringssl && \
     make && \
     cd .. && \
     mkdir -p .openssl/lib && \
-    ls  build/ssl/libssl.*  && \
-    ls  build/crypto/libcrypto.* && \
     #cp build/crypto/libcrypto.* build/ssl/libssl.* .openssl/lib && \
     ln -s $PWD/include .openssl
 
