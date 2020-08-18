@@ -35,9 +35,7 @@ RUN export PATH="$HOME/.cargo/bin:$PATH" && \
 FROM ubuntu:bionic
 RUN apt-get update && apt-get install -y curl
 
-COPY --from=builder /ubuntu/usr/local/ /usr/local/
-COPY --from=builder /opt/quiche/target/release /opt/quiche/target/release
-COPY --from=builder /opt/quiche/deps/boringssl/.openssl /opt/quiche/deps/boringssl/.openssl
+
 
 # Resolve any issues of C-level lib
 # location caches ("shared library cache")
