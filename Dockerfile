@@ -18,7 +18,7 @@ RUN cd quiche/deps/boringssl && \
     make && \
     cd .. && \
     mkdir -p .openssl/lib && \
-    cp build/crypto/libcrypto.a build/ssl/libssl.a .openssl/lib && \
+    cp build/libcrypto.a build/libssl.a .openssl/lib && \
     ln -s $PWD/include .openssl
 
 # install rust & cargo
