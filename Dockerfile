@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:18.04 AS builder
 
 LABEL maintainer="Yury Muski <muski.yury@gmail.com>"
 
@@ -18,8 +18,10 @@ RUN cd quiche/deps/boringssl && \
     make && \
     cd .. && \
     mkdir -p .openssl/lib && \
+    mkdir -p /opt/quiche/deps/boringssl/include && \
     cp build/libcrypto.a build/libssl.a .openssl/lib && \
-    ln -s $PWD/include .openssl
+    ln -s /opt/quiche/deps/boringssl/include /opt/quiche/deps/boringssl/.openssl && \
+    cp -R /opt/quiche/deps/boringssl/src/include/openssl /opt/quiche/deps/boringssl/include/
 
 # install rust & cargo
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y -q;
@@ -32,7 +34,20 @@ RUN export PATH="$HOME/.cargo/bin:$PATH" && \
 
 #adding curl
 RUN git clone https://github.com/curl/curl && \
-    cd curl 
+    cd curl && \
+    ./buildconf && \
+    ./configure LDFLAGS="-Wl,-rpath,/opt/quiche/target/release" --with-ssl=/opt/quiche/deps/boringssl/.openssl --with-quiche=/opt/quiche/target/release --enable-alt-svc && \
+    make && \
+    make DESTDIR="/ubuntu/" install
+
+
+FROM ubuntu:bionic
+RUN apt-get update && apt-get install -y curl
+
+COPY --from=builder /ubuntu/usr/local/ /usr/local/
+COPY --from=builder /opt/quiche/target/release /opt/quiche/target/release
+COPY --from=builder /opt/quiche/deps/boringssl/.openssl /opt/quiche/deps/boringssl/.openssl
+
 # Resolve any issues of C-level lib
 # location caches ("shared library cache")
 RUN ldconfig
