@@ -32,15 +32,7 @@ RUN export PATH="$HOME/.cargo/bin:$PATH" && \
 
 #adding curl
 RUN git clone https://github.com/curl/curl && \
-    cd curl && \
-    ./buildconf && \
-    ./configure LDFLAGS="-Wl,-rpath,/opt/quiche/target/release" --with-ssl=/opt/quiche/deps/boringssl/.openssl --with-quiche=/opt/quiche/target/release --enable-alt-svc && \
-    make && \
-    make DESTDIR="/ubuntu/" install
-
-
-RUN apt-get update && apt-get install -y curl
-
+    cd curl 
 # Resolve any issues of C-level lib
 # location caches ("shared library cache")
 RUN ldconfig
