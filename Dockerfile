@@ -1,11 +1,11 @@
-FROM ubuntu:18.04 AS builder
+FROM ubuntu:18.04
 
 LABEL maintainer="Yury Muski <muski.yury@gmail.com>"
 
 WORKDIR /opt
 
 RUN apt-get update && \
-    apt-get install -y build-essential git autoconf libtool libssl-dev cmake golang-go curl;
+    apt-get install -y build-essential git autoconf libtool cmake golang-go curl;
 
 # https://github.com/curl/curl/blob/master/docs/HTTP3.md#quiche-version
 
@@ -18,8 +18,8 @@ RUN cd quiche/deps/boringssl && \
     make && \
     cd .. && \
     mkdir -p .openssl/lib && \
-    cp build/libcrypto.a build/libssl.a .openssl/lib && \
-    ln -s /opt/quiche/deps/boringssl/include /opt/quiche/deps/boringssl/.openssl
+    cp build/crypto/libcrypto.a build/ssl/libssl.a .openssl/lib && \
+    ln -s $PWD/include .openssl
 
 # install rust & cargo
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y -q;
@@ -30,12 +30,16 @@ RUN export PATH="$HOME/.cargo/bin:$PATH" && \
     QUICHE_BSSL_PATH=$PWD/deps/boringssl cargo build --release --features pkg-config-meta,qlog
 
 
+#adding curl
+RUN git clone https://github.com/curl/curl && \
+    cd curl && \
+    ./buildconf && \
+    ./configure LDFLAGS="-Wl,-rpath,/opt/quiche/target/release" --with-ssl=/opt/quiche/deps/boringssl/.openssl --with-quiche=/opt/quiche/target/release --enable-alt-svc && \
+    make && \
+    make DESTDIR="/ubuntu/" install
 
 
-FROM ubuntu:bionic
 RUN apt-get update && apt-get install -y curl
-
-
 
 # Resolve any issues of C-level lib
 # location caches ("shared library cache")
