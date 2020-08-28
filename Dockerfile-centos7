@@ -10,6 +10,7 @@ RUN yum update && \
 # https://github.com/curl/curl/blob/master/docs/HTTP3.md#quiche-version
 
 RUN cd /opt/ && \
+    yum remove -y cmake && \
     wget https://github.com/Kitware/CMake/releases/download/v3.18.1/cmake-3.18.1-Linux-x86_64.tar.gz  && \
     tar zxvf cmake-3.18.1-Linux-x86_64.tar.gz  && \
     export CMAKE_HOME=/opt/cmake-3.18.1-Linux-x86_64  && \
