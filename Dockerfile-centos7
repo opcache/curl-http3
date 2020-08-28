@@ -15,7 +15,8 @@ RUN cd /opt/ && \
     tar zxvf cmake-3.18.1-Linux-x86_64.tar.gz  && \
     export CMAKE_HOME=/opt/cmake-3.18.1-Linux-x86_64  && \
     export PATH=$PATH:$CMAKE_HOME/bin  && \
-    cp /opt/cmake-3.18.1-Linux-x86_64/bin/cmake  /usr/bin/cmake  && \
+    cp -R /opt/cmake-3.18.1-Linux-x86_64/bin  /usr/  && \
+    cp -R /opt/cmake-3.18.1-Linux-x86_64/share  /usr/  && \
     cmake -version
 
 # build boring ssl
