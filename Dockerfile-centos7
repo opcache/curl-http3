@@ -5,7 +5,7 @@ LABEL maintainer="Yury Muski <muski.yury@gmail.com>"
 WORKDIR /opt
 
 RUN yum update && \
-    yum install -y build-essential git autoconf libtool cmake gcc-c++ golang-go curl;
+    yum install -y build-essential git autoconf libtool wget cmake gcc-c++ golang-go curl;
 
 # https://github.com/curl/curl/blob/master/docs/HTTP3.md#quiche-version
 
